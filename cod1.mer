@@ -1,0 +1,7 @@
+int x = "1ds";
+string s = "Hello";
+ 
+print(x);
+print(s);
+
+

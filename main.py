@@ -1,24 +1,24 @@
-from antlr4 import FileStream, CommonTokenStream
-from grammar.LangLexer import LangLexer
-from grammar.LangParser import LangParser
+import sys
+from antlr4 import *
+from grammar.MerLangListener import MerLangListener
+from grammar.MerLangParser import MerLangParser
+from grammar.MerLangLexer import MerLangLexer
+from MerLangCodeListener import MerLangCodeListener
 
-def main():
-    # Substitua com o caminho real para seu código-fonte
-    codigo_fonte_path = "cod.txt"
 
-    # Carregue o código-fonte da linguagem
-    lexer = LangLexer(FileStream(codigo_fonte_path, encoding="utf8"))
-    tokens = CommonTokenStream(lexer)
+def main(argv):
+    input = FileStream(argv[1], encoding='utf-8')
+    lexer = MerLangLexer(input)
+    stream = CommonTokenStream(lexer)
+    parser = MerLangParser(stream)
+    tree = parser.program()
 
-    # Crie o parser
-    parser = LangParser(tokens)
-    
-    # Execute o parser na regra inicial
-    tree = parser.start_()
-
-    # Exiba a árvore de análise (opcional)
-    print(tree)
-
+    with open("output.py","w") as output:
+        MerlangListen = MerLangCodeListener(output)
+        walker = ParseTreeWalker()
+        walker.walk(MerlangListen, tree)
+        
+    output.close()      
 
 if __name__ == '__main__':
-    main()
+    main(sys.argv)
