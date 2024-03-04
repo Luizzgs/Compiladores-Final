@@ -1,0 +1,8 @@
+int number = 50;
+string text = "Hello";
+string textScan = scan();
+
+print("numero: ", number);
+print("string: ", text);
+print("scan: ", textScan);
+
