@@ -1,0 +1,23 @@
+function checkPalindromo(input) {
+
+    int str_len = input.length;
+
+    int i = 0;
+
+    while (i < str_len / 2) {
+        if (input[i] != input[str_len - 1 - i]) {
+            return 'nao e um palindromo';
+        }
+        i++;
+    }
+
+    return 'e um palindromo';
+}
+
+string str = "subinoonibus";
+
+string value = checkPalindromo(str);
+
+print(str, value);
+
+print("abcdef", checkPalindromo("abcdef"));
