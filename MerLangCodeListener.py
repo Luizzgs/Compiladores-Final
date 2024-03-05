@@ -7,22 +7,22 @@ class MerLangCodeListener(MerLangListener) :
         self.output = output
         self.indentCount = 0
 
-    # Enter a parse tree produced by MerLangParser#line.
+    # Enter line
     def enterLine(self, ctx:MerLangParser.LineContext):
         self.output.write("%s" % ("\t"*self.indentCount))
 
-    # Exit a parse tree produced by MerLangParser#line.
+    # Exit line
     def exitLine(self, ctx:MerLangParser.LineContext):
         self.output.write("\n")
 
-    # Enter a parse tree produced by MerLangParser#unary_arithmetic.
+    # unary_arithmetic
     def enterUnary_arithmetic(self, ctx:MerLangParser.Unary_arithmeticContext):
         if ctx.UNARY_ADD() != None:
             self.output.write("%s += 1" % (ctx.VARIABLE()))
         elif ctx.UNARY_MINUS() != None:
             self.output.write("%s -= 1" % (ctx.VARIABLE()))
 
-    # Enter a parse tree produced by MerLangParser#condition.
+    # exitUnary_arithmetic
     def exitExpression(self, ctx:MerLangParser.ExpressionContext):
         text = ""
         for index in range(0,len(ctx.children)):
@@ -33,12 +33,12 @@ class MerLangCodeListener(MerLangListener) :
         if not isinstance(ctx.parentCtx,MerLangParser.Ternary_statementContext):
             self.output.write(text)
 
-    # Enter a parse tree produced by MerLangParser#value.
+    # enter value
     def enterValue(self, ctx:MerLangParser.ValueContext):
         if ctx.array_length() != None:
             ctx.text = f"len({ctx.array_length().VARIABLE()})"
 
-    # Enter a parse tree produced by MerLangParser#condition.
+    # enter array_length
     def exitCondition(self, ctx:MerLangParser.ConditionContext):
         self.output.write(":\n")
 
@@ -46,36 +46,36 @@ class MerLangCodeListener(MerLangListener) :
         if ctx.array_length():
             ctx.text = f"len({ctx.array_length().VARIABLE()})"
 
-    # Enter a parse tree produced by MerLangParser#conditional_statement.
+    # conditional_statement
     def enterConditional_statement(self, ctx:MerLangParser.Conditional_statementContext):
         self.output.write("%s " % (ctx.IF()))
         
         self.indentCount += 1
 
-    # Exit a parse tree produced by MerLangParser#conditional_statement.
+    # conditional_statement exit
     def exitConditional_statement(self, ctx:MerLangParser.Conditional_statementContext):
         self.indentCount -= 1
 
 
-    # Enter a parse tree produced by MerLangParser#ternary_statement.
+    # ternary_statement
     def enterTernary_statement(self, ctx:MerLangParser.Ternary_statementContext):
         self.output.write("%s if %s else %s" % (
             ctx.statement()[0].getText().replace("push","append"),
             ctx.expression().getText(),
             ctx.statement()[1].getText().replace("push","append")))
 
-    # Exit a parse tree produced by MerLangParser#ternary_statement.
+    # ternary_statement exit
     def exitTernary_statement(self, ctx:MerLangParser.Ternary_statementContext):
         self.output.write("\n")
 
-    # Enter a parse tree produced by MerLangParser#assignment.
+    # enterAssignment
     def enterAssignment(self, ctx:MerLangParser.AssignmentContext):
         if ctx.value().array_length() != None:
             self.output.write("%s = %s" % (ctx.VARIABLE(),f"len({ctx.value().array_length().VARIABLE()})"))
         else:
             self.output.write("%s = %s" % (ctx.VARIABLE(),ctx.value().getText()))
 
-    # Enter a parse tree produced by MerLangParser#array_concat.
+    # array_concat
     def enterArray_concat(self, ctx:MerLangParser.Array_concatContext):
         concatStr = ""
         for i in range(2,-1,-1):
@@ -85,6 +85,7 @@ class MerLangCodeListener(MerLangListener) :
         self.output.write("%s" % (concatStr))
 
 
+    # enterFunction
     def enterFunction(self, ctx:MerLangParser.FunctionContext):
         self.output.write("%sdef " % ('\t' * self.indentCount))
 
@@ -97,11 +98,11 @@ class MerLangCodeListener(MerLangListener) :
         self.indentCount += 1
         
 
-    
+    # exitFunction
     def exitFunction(self, ctx:MerLangParser.FunctionContext):        
         self.indentCount -= 1
 
-    
+    # enterFunction_return    
     def enterFunction_return(self, ctx:MerLangParser.Function_returnContext):
         self.output.write("%s " % (ctx.RETURN()))
         if(ctx.value()):
@@ -109,15 +110,16 @@ class MerLangCodeListener(MerLangListener) :
         else:
             pass
 
-    
+    # enterFor_loop
     def enterWhile_loop(self, ctx:MerLangParser.While_loopContext):
         self.output.write("while ")
         self.indentCount += 1
 
-    
+    # exitFor_loop    
     def exitWhile_loop(self, ctx:MerLangParser.While_loopContext):
         self.indentCount -= 1
 
+    # enterFor_loop
     def enterPrint(self, ctx:MerLangParser.PrintContext):
         valueNodes = ctx.value()
         printedContent = ""
@@ -131,6 +133,7 @@ class MerLangCodeListener(MerLangListener) :
         self.output.write("%sprint(%s)\n" % ('\t' * self.indentCount, printedContent))
     
 
+    # enterFor_loop
     def enterScan_statement(self, ctx:MerLangParser.Scan_statementContext):
         self.output.write("%s = input()\n" % (ctx.VARIABLE()))
 
